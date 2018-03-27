@@ -1,0 +1,18 @@
+/*
+Theme Name: Impreza Child
+Template: Impreza
+Version: 1.0.1
+Author: UpSolution
+Theme URI: http://impreza.us-themes.com/
+Author URI: http://us-themes.com/
+*/
+
+/*Add your own styles here:*/
+
+/* Change background image on mobile view*/
+@media (max-width: 767px) {
+  #video-row .l-section-video {
+      display: none;
+      visibility: hidden;
+  }
+}
