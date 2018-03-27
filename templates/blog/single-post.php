@@ -15,6 +15,14 @@
 
 $us_layout = US_Layout::instance();
 
+// Generate schema.org markup
+$schema_heading = $schema_text = $schema_date = '';
+if ( us_get_option( 'schema_markup' ) ) {
+	$schema_heading = ' itemprop="headline"';
+	$schema_text = ' itemprop="text"';
+	$schema_date = ' itemprop="datePublished"';
+}
+
 // Filling and filtering parameters
 $default_metas = array( 'date', 'author', 'categories', 'comments' );
 $metas = ( isset( $metas ) AND is_array( $metas ) ) ? array_intersect( $metas, $default_metas ) : $default_metas;
@@ -59,8 +67,8 @@ if ( $preview_type != 'none' AND ! post_password_required() ) {
 		if ( $post_thumbnail_id ) {
 			$image = wp_get_attachment_image_src( $post_thumbnail_id, $preview_size );
 			$preview_bg = $image[0];
-		} elseif ( $post_format == 'image' ) {
-			// Retreiving image from post content to use it as preview background
+		} else {
+			// Retreiving image from the content to use it as preview background
 			$preview_bg_html = us_get_post_preview( $the_content, TRUE );
 			if ( preg_match( '~src=\"([^\"]+)\"~u', $preview_bg_html, $matches ) ) {
 				$preview_bg = $matches[1];
@@ -74,13 +82,10 @@ if ( ! post_password_required() ) {
 }
 
 // The post itself may be paginated via <!--nextpage--> tags
-$pagination = us_wp_link_pages(
+$pagination = wp_link_pages(
 	array(
-		'before' => '<div class="g-pagination"><nav class="navigation pagination">',
-		'after' => '</nav></div>',
-		'next_or_number' => 'next_and_number',
-		'nextpagelink' => '>',
-		'previouspagelink' => '<',
+		'before' => '<nav class="post-pagination"><span class="title">' . us_translate( 'Pages:' ) . '</span>',
+		'after' => '</nav>',
 		'link_before' => '<span>',
 		'link_after' => '</span>',
 		'echo' => 0,
@@ -90,23 +95,23 @@ $pagination = us_wp_link_pages(
 // If content has no sections, we'll create them manually
 $has_own_sections = ( strpos( $the_content, ' class="l-section' ) !== FALSE );
 if ( ! $has_own_sections ) {
-	$the_content = '<section class="l-section"><div class="l-section-h i-cf" itemprop="text">' . $the_content . $pagination . '</div></section>';
+	$the_content = '<section class="l-section"><div class="l-section-h i-cf"' . $schema_text . '>' . $the_content . $pagination . '</div></section>';
 } elseif ( ! empty( $pagination ) ) {
-	$the_content .= '<section class="l-section"><div class="l-section-h i-cf" itemprop="text">' . $pagination . '</div></section>';
+	$the_content .= '<section class="l-section"><div class="l-section-h i-cf"' . $schema_text . '>' . $pagination . '</div></section>';
 }
 
 // Meta => certain html in a proper order
 $meta_html = array_fill_keys( $metas, '' );
 
-// Preparing post metas separately because we might want to order them inside the .w-blog-post-meta in future
-$meta_html['date'] = '<time class="w-blog-post-meta-date date updated';
+// Preparing post metas separately because we might want to order them inside the .w-blogpost-meta in future
+$meta_html['date'] = '<time class="w-blogpost-meta-date date updated';
 if ( ! in_array( 'date', $metas ) ) {
 	// Hiding from users but not from search engines
 	$meta_html['date'] .= ' hidden';
 }
-$meta_html['date'] .= '" itemprop="datePublished" datetime="' . get_the_date( 'Y-m-d H:i:s' ) . '">' . get_the_date() . '</time>';
+$meta_html['date'] .= '"' . $schema_date . ' datetime="' . get_the_date( 'Y-m-d H:i:s' ) . '">' . get_the_date() . '</time>';
 
-$meta_html['author'] = '<span class="w-blog-post-meta-author vcard author';
+$meta_html['author'] = '<span class="w-blogpost-meta-author vcard author';
 if ( ! in_array( 'author', $metas ) ) {
 	$meta_html['author'] .= ' hidden';
 }
@@ -117,13 +122,13 @@ $meta_html['author'] .= '</span>';
 if ( in_array( 'categories', $metas ) ) {
 	$meta_html['categories'] = get_the_category_list( ', ' );
 	if ( ! empty( $meta_html['categories'] ) ) {
-		$meta_html['categories'] = '<span class="w-blog-post-meta-category">' . $meta_html['categories'] . '</span>';
+		$meta_html['categories'] = '<span class="w-blogpost-meta-category">' . $meta_html['categories'] . '</span>';
 	}
 }
 
 $comments_number = get_comments_number();
 if ( in_array( 'comments', $metas ) AND ! ( $comments_number == 0 AND ! comments_open() ) ) {
-	$meta_html['comments'] .= '<span class="w-blog-post-meta-comments">';
+	$meta_html['comments'] .= '<span class="w-blogpost-meta-comments">';
 	// TODO Replace with get_comments_popup_link() when https://core.trac.wordpress.org/ticket/17763 is resolved
 	ob_start();
 	$comments_label = sprintf( us_translate_n( '%s <span class="screen-reader-text">Comment</span>', '%s <span class="screen-reader-text">Comments</span>', $comments_number ), $comments_number );
@@ -145,18 +150,18 @@ $meta_html = apply_filters( 'us_single_post_meta_html', $meta_html, get_the_ID()
 ?>
 <article <?php post_class( 'l-section for_blogpost preview_' . $preview_type ) ?>>
 	<div class="l-section-h i-cf">
-		<div class="w-blog">
+		<div class="w-blogpost">
 			<?php if ( ! empty( $preview_bg ) ): ?>
-				<div class="w-blog-post-preview" style="background-image: url(<?php echo $preview_bg ?>)"></div>
+				<div class="w-blogpost-preview" style="background-image: url(<?php echo $preview_bg ?>)"><img class="hidden" src="<?php echo $preview_bg ?>" alt="<?php echo esc_attr( strip_tags( get_the_title() ) ) ?>"></div>
 			<?php elseif ( ! empty( $preview_html ) OR $preview_type == 'modern' ): ?>
-				<div class="w-blog-post-preview">
+				<div class="w-blogpost-preview">
 					<?php echo $preview_html ?>
 				</div>
 			<?php endif; ?>
-			<div class="w-blog-post-body">
-				<h1 class="w-blog-post-title entry-title" itemprop="headline"><?php the_title() ?></h1>
+			<div class="w-blogpost-body">
+				<h1 class="w-blogpost-title entry-title"<?php echo $schema_heading ?>><?php the_title() ?></h1>
 
-				<div class="w-blog-post-meta<?php echo empty( $metas ) ? ' hidden' : '' ?>">
+				<div class="w-blogpost-meta<?php echo empty( $metas ) ? ' hidden' : '' ?>">
 					<?php echo implode( '', $meta_html ) ?>
 				</div>
 			</div>
@@ -173,7 +178,7 @@ $meta_html = apply_filters( 'us_single_post_meta_html', $meta_html, get_the_ID()
 
 						$.fn.trendyPreviewParallax = function(){
 							var $this = $(this),
-								$postBody = $this.siblings('.w-blog-post-body');
+								$postBody = $this.siblings('.w-blogpost-body');
 
 							function update(){
 								if (windowWidth > 900) {
@@ -200,7 +205,7 @@ $meta_html = apply_filters( 'us_single_post_meta_html', $meta_html, get_the_ID()
 							resize();
 						};
 
-						$('.l-section.for_blogpost.preview_trendy .w-blog-post-preview').trendyPreviewParallax();
+						$('.l-section.for_blogpost.preview_trendy .w-blogpost-preview').trendyPreviewParallax();
 
 					})(jQuery);
 				</script>
