@@ -62,43 +62,9 @@
   <?php endif; ?>
   <?php if ( get_option('users_can_register') && !empty($lwa_data['registration']) && $lwa_data['registration'] == 1 ) : ?>
     <div class="lwa-register" style="display:none;" >
-      <form class="registerform" data-id-prefix="" action="<?php echo esc_attr(LoginWithAjax::$url_register); ?>" method="post">
-        <p><strong><?php //esc_html_e('Register For This Site','login-with-ajax'); ?></strong></p>         
-        <div class="lwa-leader">
-          <?php 
-            $msg = "Som organizátor Rueda flashmobu";
-          ?>
-          <input type="checkbox" name="is_leader" id="is_leader" value="true"/>   
-          <strong><label for="is_leader"><?php esc_html_e( $msg,'login-with-ajax' ) ?></label></strong>
-        </div>
-        <div class="lwa-username">
-          <?php $msg = __('Username','login-with-ajax') . " (bez medzier)";// . __('without spaces','login-with-ajax') . ")"; ?>
-          <label for="user_login"><?php esc_html_e( $msg,'login-with-ajax' ) ?></label>
-          <input type="text" name="user_login" id="user_login"  value="" placeholder="<?php echo esc_attr($msg); ?>"/>   
-        </div>
-        <div class="lwa-email">
-          <?php $msg = __('E-mail','login-with-ajax'); ?>
-          <label for="user_email"><?php esc_html_e( $msg,'login-with-ajax' ) ?></label>
-          <input type="text" name="user_email" id="user_email"  value="" placeholder="<?php echo esc_attr($msg); ?>"/>   
-        </div>
-        <div class="lwa-password">
-          <?php $msg = __('Password','login-with-ajax'); ?>
-          <label for="user_password"><?php esc_html_e( $msg,'login-with-ajax' ) ?></label>
-          <input type="password" name="user_password" id="user_password"  value="" placeholder="<?php echo esc_attr($msg); ?>"/>   
-        </div>
-        <?php
-          // If you want other plugins to play nice, you need this: 
-          // do_action('register_form'); 
-        ?>
-        <p class="lwa-submit-button">
-          <?php //esc_html_e('A password will be e-mailed to you.','login-with-ajax') ?>
-<!--           Heslo vám bude zaslané na vašu emailovú adresu. -->
-          <br />
-          <input type="submit" name="wp-submit" id="wp-submit" class="button-primary" data-id-prefix="" value="<?php esc_attr_e('Register', 'login-with-ajax'); ?>" tabindex="100" />
-          <a href="#" class="lwa-links-register-inline-cancel button"><?php esc_html_e("Cancel", 'login-with-ajax'); ?></a>
-          <input type="hidden" name="login-with-ajax" value="register" />
-        </p>
-      </form>
+      <?php
+        florp_profile_form();
+      ?>
     </div>
   <?php endif; ?>
 </div>
