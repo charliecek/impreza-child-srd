@@ -9,6 +9,7 @@
   <?php
     florp_profile_form();
     $user = wp_get_current_user();
+    if ($lwa_data['hide_info_box'] != '1') :
   ?>
   <div class="florp-user-info-box">
     <span class="lwa-title-sub"><!--Dobrý deň, --><span class="florp_onchange florp_first_name"><?php echo $user->first_name; ?></span> <span class="florp_onchange florp_last_name"><?php echo $user->last_name; ?></span></span>
@@ -46,4 +47,7 @@
       </tr>
     </table>
   </div>
+  <?php
+    endif;
+  ?>
 </div>

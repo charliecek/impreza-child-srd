@@ -6,6 +6,7 @@
 */
 ?>
 <div class="lwa lwa-default" data-id-prefix="" >
+  <?php do_action( 'lwa_before_login_form', $lwa_data ); ?>
   <span class="lwa-status"></span>
   <form class="lwa-form" action="<?php echo esc_attr(LoginWithAjax::$url_login); ?>" method="post">
     <div class="lwa-username">
@@ -19,11 +20,15 @@
       <label for="lwa_user_pass"><?php esc_html_e( $msg, 'login-with-ajax' ); ?></label>
       <input type="password" name="pwd" id="lwa_user_pass" class="input"  value="<?php echo esc_attr($msg); ?>" onfocus="if(this.value == '<?php echo esc_attr($msg); ?>'){this.value = '';}" onblur="if(this.value == ''){this.value = '<?php echo esc_attr($msg); ?>'}" />
     </div>
-    
+    <div class="lwa-links">
+      <input id="lwa_rememberme" name="rememberme" type="checkbox" class="lwa-rememberme" value="forever" />
+      <label for="lwa_rememberme"><?php esc_html_e( 'Remember Me','login-with-ajax' ) ?></label><br />
+    </div>
+
     <div class="lwa-login_form">
       <?php do_action('login_form'); ?>
     </div>
-   
+
     <div class="lwa-submit-button">
       <input type="submit" name="wp-submit" id="lwa_wp-submit" value="<?php esc_attr_e('Log In','login-with-ajax'); ?>" tabindex="100" />
       <input type="hidden" name="lwa_profile_link" value="<?php echo esc_attr($lwa_data['profile_link']); ?>" />
@@ -34,8 +39,6 @@
     </div>
     
     <div class="lwa-links">
-      <input id="lwa_rememberme" name="rememberme" type="checkbox" class="lwa-rememberme" value="forever" />
-      <label for="lwa_rememberme"><?php esc_html_e( 'Remember Me','login-with-ajax' ) ?></label><br />
       
       <?php if( !empty($lwa_data['remember']) ): ?>
         <a class="lwa-links-remember button" href="<?php echo esc_attr(LoginWithAjax::$url_remember); ?>" title="<?php esc_attr_e('Password Lost and Found','login-with-ajax') ?>"><?php esc_attr_e('Lost your password?','login-with-ajax') ?></a>
@@ -65,6 +68,8 @@
       <?php
         florp_profile_form();
       ?>
+      <a href="#" class="lwa-links-register-inline-cancel button"><?php esc_attr_e("Cancel", 'login-with-ajax'); ?></a>
     </div>
   <?php endif; ?>
+  <?php do_action( 'lwa_after_login_form', $lwa_data ); ?>
 </div>

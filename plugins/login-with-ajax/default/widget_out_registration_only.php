@@ -6,6 +6,7 @@
 */
 ?>
 <div class="lwa lwa-default lwa-register-only" data-id-prefix="registration-form-only_">
+  <?php do_action( 'lwa_before_registration_form', $lwa_data ); ?>
   <span class="lwa-status"></span>
   <form class="lwa-form" action="<?php echo esc_attr(LoginWithAjax::$url_login); ?>" method="post" style="display:none;" >
     <div class="lwa-username">
@@ -43,4 +44,5 @@
       ?>
     </div>
   <?php endif; ?>
+  <?php do_action( 'lwa_after_registration_form', $lwa_data ); ?>
 </div>
