@@ -241,6 +241,7 @@ function srd__us_load_header_settings( $aSettings ) {
           }
           foreach ($aHide as $where) {
             if (isset($val['layout'][$where]) && !empty($val['layout'][$where])) {
+              // Remove from original place and move to hidden //
               $aNewSettings[$key]['layout']['hidden'] = array_merge($aNewSettings[$key]['layout']['hidden'], $val['layout'][$where]);
               $aNewSettings[$key]['layout'][$where] = array();
             }
